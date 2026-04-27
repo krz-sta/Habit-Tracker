@@ -2,9 +2,10 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .serializers import HabitSerializer, HabitLogSerializer
-from .models import Habit
+from .models import Habit, HabitLog
 from rest_framework import status
 from rest_framework.response import Response
+
 
 # Create your views here.
 class HabitView(APIView):
@@ -48,3 +49,24 @@ class HabitView(APIView):
             return Response({'message': 'Habit not found.'}, status=status.HTTP_404_NOT_FOUND)
         habit.delete()
         return Response({'message': 'Habit deleted.'}, status=status.HTTP_200_OK)
+    
+    
+class HabitLogView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request, pk):
+        try:
+            habit = Habit.objects.get(pk=pk, owner=request.user)
+        except Habit.DoesNotExist:
+            return Response({'message': 'Habit not found.'},status=status.HTTP_404_NOT_FOUND)
+        
+        if habit.type == 'bad':
+            return Response({'message': "You can't log a bad habit."}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = HabitLogSerializer(data={'habit': habit.id, 'log_date': request.data.get('log_date')})
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Habit logged.'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request, pk):
+        ...
