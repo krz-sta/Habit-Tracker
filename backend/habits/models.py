@@ -8,7 +8,7 @@ class Habit(models.Model):
     
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
-    desc = models.CharField(max_length=200)
+    desc = models.CharField(max_length=200, blank=True)
     start_date = models.DateField()
     type = models.CharField(max_length=10, choices=Type.choices)
     
