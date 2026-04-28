@@ -23,32 +23,27 @@ class HabitView(APIView):
         habits = Habit.objects.filter(owner=request.user)
         serializer = HabitSerializer(habits, many=True)
         return Response(serializer.data)
-    
-    
-    def get_object(self, pk, user):
-        try:
-            return Habit.objects.get(pk=pk, owner=user)
-        except Habit.DoesNotExist:
-            return None
         
     
     def put(self, request, pk):
-        habit = self.get_object(pk, request.user)
-        if not habit:
+        try:
+            habit = Habit.objects.get(pk=pk, owner=request.user)
+        except Habit.DoesNotExist:
             return Response({'message': 'Habit not found.'}, status=status.HTTP_404_NOT_FOUND)
         serializer = HabitSerializer(habit, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(owner=request.user)
             return Response({'message': 'Habit updated.'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
     def delete(self, request, pk):
-        habit = self.get_object(pk, request.user)
-        if not habit:
+        try:
+            habit = Habit.objects.get(pk=pk, owner=request.user)
+        except Habit.DoesNotExist:
             return Response({'message': 'Habit not found.'}, status=status.HTTP_404_NOT_FOUND)
         habit.delete()
-        return Response({'message': 'Habit deleted.'}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
     
 class HabitLogView(APIView):
@@ -67,6 +62,18 @@ class HabitLogView(APIView):
             serializer.save()
             return Response({'message': 'Habit logged.'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    def get(self, request, pk):
+        habit_logs = HabitLog.objects.filter(habit__id=pk, habit__owner=request.user)
+        serializer = HabitLogSerializer(habit_logs, many=True)
+        return Response(serializer.data)
         
-    def delete(self, request, pk):
-        ...
+        
+    def delete(self, request, pk, log_pk):
+        try:
+            habit_log = HabitLog.objects.get(pk=log_pk, habit__owner=request.user)
+        except HabitLog.DoesNotExist:
+            return Response({'message': 'Habit log not found.'}, status=status.HTTP_404_NOT_FOUND)
+        habit_log.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
