@@ -21,10 +21,10 @@ const type = ref<'good' | 'bad' | null>(null);
         </label>
         <h3>Type:</h3>
         <label>
-            <input type="radio" value="good" v-model="type" /> A
+            <input type="radio" value="good" v-model="type" />good
         </label>
         <label>
-            <input type="radio" value="bad" v-model="type" /> B
+            <input type="radio" value="bad" v-model="type" />bad
         </label>
 
         <p v-if="type">Selected: {{ type }}</p>

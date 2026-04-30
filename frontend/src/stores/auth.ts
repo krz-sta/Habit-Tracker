@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { http } from '@/api/axios'
+import router from '@/router/index.ts'
 
 export const useAuthStore = defineStore('auth', () => {
     const token = ref<string | null>(localStorage.getItem('token'))
     const user = ref<string | null>(null)
+
 
     const isAuthenticated = computed(() => !!token.value)
 
@@ -29,6 +31,7 @@ export const useAuthStore = defineStore('auth', () => {
         token.value = null
         user.value = null
         localStorage.removeItem('token')
+        router.push('/')
     }
 
     return { token, user, isAuthenticated, login, register, logout, fetchUser }

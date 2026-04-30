@@ -14,7 +14,7 @@ async function handleLogin() {
     error.value = null
     try {
         await authStore.login(username.value, password.value)
-        router.push('/')
+        router.push('/home')
     } catch (e: any) {
         error.value = e.response?.data?.detail ?? 'Login failed.'
     }
@@ -22,7 +22,7 @@ async function handleLogin() {
 </script>
 
 <template>
-    <div>
+    <div class="bg-green-100">
         <h1>Login</h1>
         <input v-model="username" type="text" placeholder="Username" />
         <input v-model="password" type="password" placeholder="Password" />
