@@ -17,14 +17,35 @@ export const useHabitStore = defineStore("habits", () => {
     }
 
     async function updateHabit(id: number, title: string, desc: string, start_date: string, type: string) {
-        await http.put(`/habits/${id}`, { title, desc, start_date, type });
+        await http.put(`/habits/${id}/`, { title, desc, start_date, type });
         fetchHabits();
     }
 
     async function deleteHabit(id: number) {
-        await http.delete(`/habits/${id}/`)
+        await http.delete(`/habits/${id}/`);
         fetchHabits();
     }
 
-    return { habits, fetchHabits, createHabit, updateHabit, deleteHabit }
+    async function fetchHabitLogs(id: number) {
+        const response = await http.get(`/habits/${id}/log/`);
+        for (const habit of habits.value ?? []) {
+            if (habit.id === id) {
+                habit.logs = response.data;
+            }
+        }
+    }
+
+    async function logHabit(id: number) {
+        const date: Date = new Date();
+        const dateToSend: string = date.toLocaleDateString('en-CA');
+        await http.post(`/habits/${id}/log/`, { "log_date": dateToSend });
+        fetchHabitLogs(id);
+    }
+
+    async function deleteHabitLog(habitLogId: number, habitId: number) {
+        await http.delete(`/habits/${habitId}/log/${habitLogId}/`);
+        fetchHabitLogs(habitId);
+    }
+
+    return { habits, fetchHabits, createHabit, updateHabit, deleteHabit, fetchHabitLogs, logHabit, deleteHabitLog }
 });
