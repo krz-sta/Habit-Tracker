@@ -18,7 +18,7 @@ const router = useRouter();
         <h1 class="text-xl font-bold inline">Habit Tracker</h1>
     </div>
 
-    <button v-if="route.path==='/'" @click="router.push('/login')" class="text-white bg-green-600 px-6 py-2 rounded-lg font-medium hover:bg-green-700">Get Started</button>
+    <button v-if="route.path==='/'" @click="router.push('/auth')" class="text-white bg-green-600 px-6 py-2 rounded-lg font-medium hover:bg-green-700">Get Started</button>
     <button v-else @click="authStore.logout" class="text-white bg-green-600 px-6 py-2 rounded-lg font-medium hover:bg-green-700">Log out</button>
 </header>
 </template>

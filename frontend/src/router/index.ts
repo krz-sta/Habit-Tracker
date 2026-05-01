@@ -1,33 +1,28 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import LoginView from '@/views/LoginView.vue'
-import RegisterView from '@/views/RegisterView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import AuthView from '@/views/AuthView.vue';
+import HomeView from '@/views/HomeView.vue';
+import LandingView from '@/views/LandingView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/login',
-      name: 'login',
-      component: LoginView,
-      meta: { requiresAuth: false }
-    },
-    {
-      path: '/register',
-      name: 'register',
-      component: RegisterView,
+      path: '/auth',
+      name: 'auth',
+      component: AuthView,
       meta: { requiresAuth: false }
     },
     {
       path: '/home',
       name: 'home',
-      component: () => import('@/views/HomeView.vue'),
+      component: HomeView,
       meta: { requiresAuth: true }
     },
     {
       path: '/',
       name: 'landing',
-      component: () => import('@/views/LandingView.vue'),
+      component: LandingView,
       meta: { requiresAuth: false }
     }
   ],

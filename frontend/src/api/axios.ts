@@ -15,7 +15,9 @@ http.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             localStorage.removeItem('token')
-            window.location.href = '/login'
+            if (window.location.pathname !== '/auth') {
+                window.location.href = '/auth';
+            }
         }
         return Promise.reject(error)
     }
