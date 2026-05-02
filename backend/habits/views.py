@@ -62,12 +62,6 @@ class HabitLogView(APIView):
             serializer.save()
             return Response({'message': 'Habit logged.'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
-    def get(self, request, pk):
-        habit_logs = HabitLog.objects.filter(habit__id=pk, habit__owner=request.user)
-        serializer = HabitLogSerializer(habit_logs, many=True)
-        return Response(serializer.data)
         
         
     def delete(self, request, pk, log_pk):
@@ -77,3 +71,12 @@ class HabitLogView(APIView):
             return Response({'message': 'Habit log not found.'}, status=status.HTTP_404_NOT_FOUND)
         habit_log.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class AllHabitLogsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        habit_logs = HabitLog.objects.filter(habit__owner=request.user)
+        serializer = HabitLogSerializer(habit_logs, many=True)
+        return Response(serializer.data)
