@@ -2,16 +2,29 @@
 import { useHabitStore } from '@/stores/habits';
 import type { Habit } from '@/types/habit';
 import { Check, TrendingUp, Trash2, RefreshCcw } from 'lucide-vue-next';
+import { computed } from 'vue';
 
-defineProps<{
+const { habit } = defineProps<{
     habit: Habit
 }>()
+
+const badHabitStreak = computed(() => {
+    const todayDate: Date = new Date();
+    const badHabitStartDate: Date = new Date(habit.start_date);
+    return Math.floor(todayDate.getDate() - badHabitStartDate.getDate());
+})
 
 const habitStore = useHabitStore();
 
 const today: string = '01-01-2001';
 const isCompletedToday: boolean = false;
 const streak: number = 11;
+
+async function handleResetBadHabitStreak() {
+    const date: Date = new Date();
+    const dateToSend: string = date.toLocaleDateString('en-CA');
+    await habitStore.updateHabit(habit.id, habit.title, habit.desc, dateToSend, habit.type);
+}
 
 </script>
 
@@ -28,7 +41,8 @@ const streak: number = 11;
             <div class="flex items-center gap-4 mt-2">
                 <div class="flex items-center gap-1 text-sm">
                     <TrendingUp class="w-4 h-4" />
-                    <span>X day streak</span>
+                    <span v-if="habit.type === 'good'" >X day streak</span>
+                    <span v-if="habit.type === 'bad'">{{ badHabitStreak }} day streak</span>
                 </div>
                 <div v-if="habit.type === 'good'" class="text-sm text-gray-600">
                     {{ habit.logs?.length ?? 0 }} total
@@ -37,7 +51,7 @@ const streak: number = 11;
         </div>
 
         <div class="flex gap-2">
-            <button
+            <button v-if="habit.type === 'good'"
                 :class="`p-2 rounded-md transition-colors ${
                     isCompletedToday
                         ? habit.type === 'good'
@@ -46,10 +60,11 @@ const streak: number = 11;
                         : 'bg-white border border-gray-300 hover:bg-gray-50'
                 }`"
             >
-                <Check v-if="habit.type === 'good'" class="w-5 h-5"/>
-                <RefreshCcw v-else class="w-5 h-5" />
+                <Check class="w-5 h-5" />
+            </button> 
+            <button v-else @click="handleResetBadHabitStreak()" class="p-2 rounded-md bg-white border border-gray-300 hover:bg-gray-50 text-gray-700">
+                <RefreshCcw class="w-5 h-5" />
             </button>
-
             <button
                 @click="habitStore.deleteHabit(habit.id)"
                 class="p-2 rounded-md bg-white border border-gray-300 hover:bg-gray-50 text-gray-700"
