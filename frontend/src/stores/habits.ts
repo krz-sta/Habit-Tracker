@@ -4,7 +4,7 @@ import { http } from "@/api/axios";
 import type { Habit } from "@/types/habit";
 
 export const useHabitStore = defineStore("habits", () => {
-    const habits = ref<Habit[] | null>(null);
+    const habits = ref<Habit[] | null>([]);
 
     async function fetchHabits() {
         const response = await http.get('/habits/');
@@ -28,11 +28,18 @@ export const useHabitStore = defineStore("habits", () => {
         await fetchHabits();
     }
 
-    async function fetchHabitLogs(id: number) {
-        const response = await http.get(`/habits/${id}/log/`);
+    async function fetchAllHabitLogs() {
+        const response = await http.get(`/habits/log/`);
+
         for (const habit of habits.value ?? []) {
-            if (habit.id === id) {
-                habit.logs = response.data;
+            habit.logs = [];
+        }
+
+        for (const habitLog of response.data) {
+            for (const habit of habits.value ?? []) {
+                if (habitLog.habit == habit.id) {
+                    habit.logs.push(habitLog);
+                }
             }
         }
     }
@@ -41,13 +48,13 @@ export const useHabitStore = defineStore("habits", () => {
         const date: Date = new Date();
         const dateToSend: string = date.toLocaleDateString('en-CA');
         await http.post(`/habits/${id}/log/`, { "log_date": dateToSend });
-        await fetchHabitLogs(id);
+        await fetchAllHabitLogs();
     }
 
     async function deleteHabitLog(habitLogId: number, habitId: number) {
         await http.delete(`/habits/${habitId}/log/${habitLogId}/`);
-        await fetchHabitLogs(habitId);
+        await fetchAllHabitLogs();
     }
 
-    return { habits, fetchHabits, createHabit, updateHabit, deleteHabit, fetchHabitLogs, logHabit, deleteHabitLog }
+    return { habits, fetchHabits, createHabit, updateHabit, deleteHabit, fetchAllHabitLogs, logHabit, deleteHabitLog }
 });
