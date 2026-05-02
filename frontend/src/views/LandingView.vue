@@ -2,6 +2,7 @@
 import Header from '@/components/Header.vue';
 import { useRouter } from 'vue-router';
 import { TrendingUp, TrendingDown, Target, Calendar, BarChart3, CheckCircle2, TrendingUpIcon, TrendingUpDown, LucideTrendingUp, TrendingDownIcon } from 'lucide-vue-next';
+import Footer from '@/components/Footer.vue';
 
 const router = useRouter();
 
@@ -36,7 +37,7 @@ const router = useRouter();
 
                     <div class="bg-white rounded-xl p-6 shadow-md">
                         <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                            <TrendingDownIcon class="w-6 h-6 text-red-600" />
+                            <TrendingDown class="w-6 h-6 text-red-600" />
                         </div>
                         <h3 class="text-xl font-semibold text-gray-900 mb-2">Break Bad Habits</h3>
                         <p class="text-gray-600">
@@ -98,6 +99,8 @@ const router = useRouter();
                     <button @click="router.push('/home')" class="px-8 py-4 rounded-lg bg-white hover:bg-gray-100 text-green-600 font-semibold text-lg shadow-lg transition-all">Create Your Account</button>
                 </div>
             </section>
+
+            <Footer />
         </main>
     </div>
 
