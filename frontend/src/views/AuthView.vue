@@ -9,7 +9,7 @@ const authStore = useAuthStore();
 const username = ref('');
 const password = ref('');
 const error = ref<string | null>(null);
-const isLogin = ref<true | false | null>(true);
+const isLogin = ref<true | false >(true);
 
 async function handleLogin() {
     error.value = null
@@ -25,13 +25,17 @@ async function handleRegister() {
     error.value = null
     try {
         await authStore.register(username.value, password.value)
+        username.value = '';
+        password.value = '';
+        isLogin.value = true;
     } catch (e: any) {
         error.value = e.response?.data?.detail ?? 'Logiin failed'
     }
 }
 
 async function handleSubmit() {
-    if (isLogin) {
+    console.log(isLogin.value);
+    if (isLogin.value) {
         handleLogin();
     } else {
         handleRegister();

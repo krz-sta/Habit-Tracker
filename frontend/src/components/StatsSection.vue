@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import StatCard from './StatCard.vue';
 import { Target, TrendingUp, Flame, Calendar } from 'lucide-vue-next';
+import { useHabitStore } from '@/stores/habits';
+
+const habitStore = useHabitStore();
+
 </script>
 
 <template>
@@ -8,7 +12,7 @@ import { Target, TrendingUp, Flame, Calendar } from 'lucide-vue-next';
     <h2 class="text-xl font-semibold text-gray-900 mb-6">Your Stats</h2>
 
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Habits" value="0" bg-color="bg-blue-50">
+        <StatCard label="Total Habits" :value="habitStore.habits?.length ?? 0" bg-color="bg-blue-50">
             <template #icon>
                 <Target class="w-6 h-6 text-blue-600"/>
             </template>
