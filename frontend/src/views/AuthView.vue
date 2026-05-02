@@ -42,10 +42,11 @@ async function handleSubmit() {
 
 <template>
     <div class="min-h-screen bg-green-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
+        <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative">
+            <button @click="router.push('/')" class="absolute top-6 left-6">←</button>
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold mb-2">Habit Tracker</h1>
-                <p class="text-gray-600">{{ isLogin ? 'Welcome back!' : 'Create an account' }}</p>
+                <h1 class="text-3xl font-bold mb-2 m-y-2">Habit Tracker</h1>
+                <p class="text-gray-600 ">{{ isLogin ? 'Welcome back!' : 'Create an account' }}</p>
             </div>
             <form @submit.prevent="handleSubmit()">
                 <div class="text-sm font-medium text-gray-700 mb-5">
