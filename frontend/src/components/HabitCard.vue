@@ -9,9 +9,12 @@ const { habit } = defineProps<{
 }>()
 
 const badHabitStreak = computed(() => {
-    const todayDate: Date = new Date();
-    const badHabitStartDate: Date = new Date(habit.start_date);
-    return Math.floor(todayDate.getDate() - badHabitStartDate.getDate());
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const startDate = new Date(habit.start_date)
+    startDate.setHours(0, 0, 0, 0)
+    const diffMs = today.getTime() - startDate.getTime()
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24))
 })
 
 const habitStore = useHabitStore();
