@@ -18,6 +18,7 @@ const badHabits = computed(() => habitStore.habits?.filter(h => h.type === 'bad'
 
 onMounted(async () => {
     await habitStore.fetchHabits();
+    await habitStore.fetchAllHabitLogs();
 });
 
 

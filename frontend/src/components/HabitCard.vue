@@ -17,11 +17,39 @@ const badHabitStreak = computed(() => {
     return Math.floor(diffMs / (1000 * 60 * 60 * 24))
 })
 
+function calculateStreak () {
+    if (!habit.logs || habit.logs.length === 0) return 0;
+
+    const sorted = [...habit.logs]
+        .map(l => l.log_date)
+        .sort((a, b) => b.localeCompare(a));
+
+    let streak = 0;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    for (const logDate of sorted) {
+        const expected = new Date(today);
+        expected.setDate(today.getDate() - streak);
+        const expectedStr = expected.toLocaleDateString('en-CA');
+
+        if (logDate === expectedStr) {
+            streak++;
+        } else {
+            break;
+        }
+    }
+    return streak;
+} 
+
 const habitStore = useHabitStore();
 
 const today: string = '01-01-2001';
-const isCompletedToday: boolean = false;
-const streak: number = 11;
+
+const isCompletedToday = computed(() => {
+    const todayStr = new Date().toLocaleDateString('en-CA');
+    return habit.logs?.some(log => log.log_date === todayStr) ?? false;
+});
 
 async function handleResetBadHabitStreak() {
     const date: Date = new Date();
@@ -44,7 +72,7 @@ async function handleResetBadHabitStreak() {
             <div class="flex items-center gap-4 mt-2">
                 <div class="flex items-center gap-1 text-sm">
                     <TrendingUp class="w-4 h-4" />
-                    <span v-if="habit.type === 'good'" >X day streak</span>
+                    <span v-if="habit.type === 'good'" >{{ calculateStreak() }} day streak</span>
                     <span v-if="habit.type === 'bad'">{{ badHabitStreak }} day streak</span>
                 </div>
                 <div v-if="habit.type === 'good'" class="text-sm text-gray-600">
