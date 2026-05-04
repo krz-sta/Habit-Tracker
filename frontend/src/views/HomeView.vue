@@ -10,11 +10,13 @@ import { TrendingDown, TrendingUp } from 'lucide-vue-next';
 import AddHabitForm from '@/components/AddHabitForm.vue';
 import HabitCard from '@/components/HabitCard.vue';
 
+import type { Habit } from '@/types/habit';
+
 const habitStore = useHabitStore();
 const authStore = useAuthStore();
 
-const goodHabits = computed(() => habitStore.habits?.filter(h => h.type === 'good'));
-const badHabits = computed(() => habitStore.habits?.filter(h => h.type === 'bad'));
+const goodHabits = computed(() => habitStore.habits?.filter((h: Habit) => h.type === 'good') ?? []);
+const badHabits = computed(() => habitStore.habits?.filter((h: Habit) => h.type === 'bad') ?? []);
 
 onMounted(async () => {
     await habitStore.fetchHabits();

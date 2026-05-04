@@ -44,8 +44,6 @@ function calculateStreak () {
 
 const habitStore = useHabitStore();
 
-const today: string = '01-01-2001';
-
 const isCompletedToday = computed(() => {
     const todayStr = new Date().toLocaleDateString('en-CA');
     return habit.logs?.some(log => log.log_date === todayStr) ?? false;

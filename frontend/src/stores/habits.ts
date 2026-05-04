@@ -22,6 +22,7 @@ export const useHabitStore = defineStore("habits", () => {
     async function updateHabit(id: number, title: string, desc: string, start_date: string, type: string) {
         await http.put(`/habits/${id}/`, { title, desc, start_date, type });
         await fetchHabits();
+        await fetchAllHabitLogs();
     }
 
     async function deleteHabit(id: number) {
