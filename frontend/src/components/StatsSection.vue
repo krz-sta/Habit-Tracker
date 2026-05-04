@@ -2,8 +2,16 @@
 import StatCard from './StatCard.vue';
 import { Target, TrendingUp, Flame, Calendar } from 'lucide-vue-next';
 import { useHabitStore } from '@/stores/habits';
+import { computed } from 'vue';
 
 const habitStore = useHabitStore();
+
+const countCompletedToday = computed(() => {
+    const today = new Date().toLocaleDateString('en-CA');
+    return habitStore.habits?.filter((habit) => habit.logs.some((log) => log.log_date === today)).length ?? 0;
+});
+
+
 
 </script>
 
@@ -18,7 +26,7 @@ const habitStore = useHabitStore();
             </template>
         </StatCard>
         
-        <StatCard label="Completed Today" value="0" bg-color="bg-green-50">
+        <StatCard label="Completed Today" :value="countCompletedToday" bg-color="bg-green-50">
             <template #icon>
                 <TrendingUp class="w-6 h-6 text-green-600"/>
             </template>
@@ -30,7 +38,7 @@ const habitStore = useHabitStore();
             </template>
         </StatCard>
 
-        <StatCard label="This Week" value="0" bg-color="bg-indigo-50">
+        <StatCard label="Completions This Week" value="0" bg-color="bg-indigo-50">
             <template #icon>
                 <Calendar class="w-6 h-6 text-indigo-600"/>
             </template>
