@@ -57,6 +57,21 @@ async function handleResetBadHabitStreak() {
     await habitStore.updateHabit(habit.id, habit.title, habit.desc, dateToSend, habit.type);
 }
 
+async function handleToggleHabitLog() {
+    console.log("xyz")
+    console.log(isCompletedToday.value)
+    if (isCompletedToday.value) {
+        const today = new Date().toLocaleDateString('en-CA');
+        const todaysHabitLog = habit.logs.find((log) => log.log_date === today);
+        if (todaysHabitLog?.id) {
+            habitStore.deleteHabitLog(todaysHabitLog.id, habit.id);
+        }
+    } else {
+        console.log("logging")
+        habitStore.logHabit(habit.id);
+    }
+}
+
 </script>
 
 <template>
@@ -90,6 +105,7 @@ async function handleResetBadHabitStreak() {
                             : 'bg-red-500 text-white'
                         : 'bg-white border border-gray-300 hover:bg-gray-50'
                 }`"
+                @click="handleToggleHabitLog()"
             >
                 <Check class="w-5 h-5" />
             </button> 
