@@ -16,6 +16,7 @@ export const useHabitStore = defineStore("habits", () => {
         const dateToSend: string = date.toLocaleDateString('en-CA');
         await http.post('/habits/', { title, desc, "start_date": dateToSend, type });
         await fetchHabits();
+        await fetchAllHabitLogs();
     }
 
     async function updateHabit(id: number, title: string, desc: string, start_date: string, type: string) {
@@ -26,6 +27,7 @@ export const useHabitStore = defineStore("habits", () => {
     async function deleteHabit(id: number) {
         await http.delete(`/habits/${id}/`);
         await fetchHabits();
+        await fetchAllHabitLogs();
     }
 
     async function fetchAllHabitLogs() {
