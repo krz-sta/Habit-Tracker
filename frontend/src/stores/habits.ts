@@ -5,10 +5,16 @@ import type { Habit } from "@/types/habit";
 
 export const useHabitStore = defineStore("habits", () => {
     const habits = ref<Habit[] | null>([]);
+    const isLoading = ref<boolean>(false);
 
     async function fetchHabits() {
-        const response = await http.get('/habits/');
-        habits.value = response.data;
+        isLoading.value = true;
+        try {
+            const response = await http.get('/habits/');
+            habits.value = response.data;
+        } finally {
+            isLoading.value = false;
+        }
     }
 
     async function createHabit(title: string, desc: string, type: string) {
@@ -32,18 +38,23 @@ export const useHabitStore = defineStore("habits", () => {
     }
 
     async function fetchAllHabitLogs() {
-        const response = await http.get(`/habits/log/`);
-
-        for (const habit of habits.value ?? []) {
-            habit.logs = [];
-        }
-
-        for (const habitLog of response.data) {
+        isLoading.value = true;
+        try {
+            const response = await http.get(`/habits/log/`);
+            
             for (const habit of habits.value ?? []) {
-                if (habitLog.habit == habit.id) {
-                    habit.logs.push(habitLog);
+                habit.logs = [];
+            }
+    
+            for (const habitLog of response.data) {
+                for (const habit of habits.value ?? []) {
+                    if (habitLog.habit == habit.id) {
+                        habit.logs.push(habitLog);
+                    }
                 }
             }
+        } finally {
+            isLoading.value = false;
         }
     }
 
@@ -59,5 +70,5 @@ export const useHabitStore = defineStore("habits", () => {
         await fetchAllHabitLogs();
     }
 
-    return { habits, fetchHabits, createHabit, updateHabit, deleteHabit, fetchAllHabitLogs, logHabit, deleteHabitLog }
+    return { habits, fetchHabits, createHabit, updateHabit, deleteHabit, fetchAllHabitLogs, logHabit, deleteHabitLog, isLoading }
 });

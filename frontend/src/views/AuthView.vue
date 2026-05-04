@@ -2,27 +2,35 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { useToastStore } from '@/stores/toast';
+import Toast from '@/components/Toast.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const toastStore = useToastStore();
 
 const username = ref('');
 const password = ref('');
-const error = ref<string | null>(null);
 const isLogin = ref<boolean>(true);
 
 async function handleLogin() {
-    error.value = null
     try {
-        await authStore.login(username.value, password.value)
-        router.push('/home')
+        await authStore.login(username.value, password.value);
+        router.push('/home');
     } catch (e: any) {
-        error.value = e.response?.data?.detail ?? 'Login failed'
+        toastStore.show(e.response?.data?.detail ?? 'Login failed')
     }
 }
 
 async function handleRegister() {
-    error.value = null
+    if (username.value.trim().length < 4) {
+        toastStore.show('Username must be at least 4 characters long.');
+        return;
+    }
+    if (password.value.trim().length < 8) {
+        toastStore.show('Password must be at least 8 characters long.');
+        return;
+    }
     try {
         await authStore.register(username.value, password.value)
         username.value = '';
@@ -30,7 +38,11 @@ async function handleRegister() {
         isLogin.value = true;
         router.push('/home');
     } catch (e: any) {
-        error.value = e.response?.data?.detail ?? 'Login failed'
+        if (e.response?.data?.username) {
+            toastStore.show(e.response?.data?.username?.[0] ?? 'Register failed')
+            return
+        }
+        toastStore.show(e.response?.data?.detail[0] ?? 'Register failed')
     }
 }
 
@@ -45,6 +57,7 @@ async function handleSubmit() {
 </script>
 
 <template>
+    <Toast />
     <div class="min-h-screen bg-green-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative">
             <button @click="router.push('/')" class="absolute top-6 left-6">←</button>
@@ -61,7 +74,6 @@ async function handleSubmit() {
                     <label class="block text-sm font-medium text-gray-700 mb-1">Password:</label>
                     <input v-model="password" type="password" placeholder="••••••••" @keyup.enter.prevent="handleSubmit()" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"/>
                 </div>
-                <p v-if="error" class="text-center text-red-600 m-4">{{ error }}</p>
                 <button v-if="isLogin" type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg">Sign In</button>
                 <button v-else type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg">Register</button>
             </form>
