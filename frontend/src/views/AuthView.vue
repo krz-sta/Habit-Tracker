@@ -9,7 +9,7 @@ const authStore = useAuthStore();
 const username = ref('');
 const password = ref('');
 const error = ref<string | null>(null);
-const isLogin = ref<true | false >(true);
+const isLogin = ref<boolean>(true);
 
 async function handleLogin() {
     error.value = null
@@ -28,17 +28,17 @@ async function handleRegister() {
         username.value = '';
         password.value = '';
         isLogin.value = true;
+        router.push('/home');
     } catch (e: any) {
-        error.value = e.response?.data?.detail ?? 'Logiin failed'
+        error.value = e.response?.data?.detail ?? 'Login failed'
     }
 }
 
 async function handleSubmit() {
-    console.log(isLogin.value);
     if (isLogin.value) {
-        handleLogin();
+        await handleLogin();
     } else {
-        handleRegister();
+        await handleRegister();
     }
 }
 
@@ -55,11 +55,11 @@ async function handleSubmit() {
             <form @submit.prevent="handleSubmit()">
                 <div class="text-sm font-medium text-gray-700 mb-5">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Username:</label>
-                    <input v-model="username" type="text" placeholder="Your username" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"/>
+                    <input v-model="username" type="text" placeholder="Your username" @keyup.enter.prevent="handleSubmit()" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"/>
                 </div>
                 <div class="text-sm font-medium text-gray-700 mb-5">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Password:</label>
-                    <input v-model="password" type="password" placeholder="••••••••" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"/>
+                    <input v-model="password" type="password" placeholder="••••••••" @keyup.enter.prevent="handleSubmit()" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"/>
                 </div>
                 <p v-if="error" class="text-center text-red-600 m-4">{{ error }}</p>
                 <button v-if="isLogin" type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg">Sign In</button>

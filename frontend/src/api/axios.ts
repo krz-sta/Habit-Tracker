@@ -12,13 +12,30 @@ http.interceptors.request.use((config) => {
 
 http.interceptors.response.use(
     (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem('token')
-            if (window.location.pathname !== '/auth') {
-                window.location.href = '/auth';
+    async (error) => {
+        const originalRequest = error.config
+
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            if (originalRequest.url?.includes('/token/') || originalRequest.url?.includes('/register/')) {
+                return Promise.reject(error)
+            }
+
+            originalRequest._retry = true
+
+            try {
+                const { useAuthStore } = await import('@/stores/auth')
+                const authStore = useAuthStore()
+                await authStore.refreshToken()
+
+                originalRequest.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
+                return http(originalRequest)
+            } catch {
+                localStorage.removeItem('token')
+                localStorage.removeItem('refresh')
+                window.location.href = '/auth'
             }
         }
+
         return Promise.reject(error)
     }
 )
