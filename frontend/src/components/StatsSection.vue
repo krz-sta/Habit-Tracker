@@ -11,6 +11,15 @@ const countCompletedToday = computed(() => {
     return habitStore.habits?.filter((habit) => habit.logs.some((log) => log.log_date === today)).length ?? 0;
 });
 
+const countCompletedThisWeek = computed(() => {
+    const startOfWeek = new Date()
+    startOfWeek.setHours(0, 0, 0, 0)
+    const day = startOfWeek.getDay() || 7
+    startOfWeek.setDate(startOfWeek.getDate() - day + 1)
+
+    const start = startOfWeek.toLocaleDateString('en-CA')
+    return habitStore.habits?.flatMap(h => h.logs ?? []).filter(log => log.log_date >= start).length ?? 0
+})
 
 
 </script>
@@ -38,7 +47,7 @@ const countCompletedToday = computed(() => {
             </template>
         </StatCard>
 
-        <StatCard label="Completions This Week" value="0" bg-color="bg-indigo-50">
+        <StatCard label="Completions This Week" :value="countCompletedThisWeek" bg-color="bg-indigo-50">
             <template #icon>
                 <Calendar class="w-6 h-6 text-indigo-600"/>
             </template>
