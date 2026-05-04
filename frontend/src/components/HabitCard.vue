@@ -58,8 +58,6 @@ async function handleResetBadHabitStreak() {
 }
 
 async function handleToggleHabitLog() {
-    console.log("xyz")
-    console.log(isCompletedToday.value)
     if (isCompletedToday.value) {
         const today = new Date().toLocaleDateString('en-CA');
         const todaysHabitLog = habit.logs.find((log) => log.log_date === today);
@@ -67,7 +65,6 @@ async function handleToggleHabitLog() {
             habitStore.deleteHabitLog(todaysHabitLog.id, habit.id);
         }
     } else {
-        console.log("logging")
         habitStore.logHabit(habit.id);
     }
 }
